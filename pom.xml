@@ -5,6 +5,7 @@
 	<modules>
 		<module>proxy</module>
 		<module>application</module>
+		<module>OAuth2</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
