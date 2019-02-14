@@ -1,7 +1,16 @@
-# springzuulreverseproxy
-sample of spring zuul reverse proxy
+# Spring Zuul Reverse Proxy
 
+### Proxy (./proxy)
 
-client for stream api
+Sample of spring zuul reverse proxy
 
-Accept application/stream+json
+### REST application (./application)
+
+Spring boot Flux + redis spring data reactive
+
+### Oauth2 server (./OAuth2)
+
+Developpement front end use this http header
+
+`Accept application/stream+json`
+
