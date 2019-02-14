@@ -1,9 +1,7 @@
 package com.example.application.entities;
 
 import com.example.application.models.MusicStyle;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
@@ -14,6 +12,8 @@ import java.util.List;
 @Setter
 @Builder
 @RedisHash("Song")
+@NoArgsConstructor
+@AllArgsConstructor
 public class SongEntity implements Serializable {
 
     private String id;

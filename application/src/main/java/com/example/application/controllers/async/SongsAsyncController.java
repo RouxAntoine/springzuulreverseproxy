@@ -20,14 +20,11 @@ public class SongsAsyncController {
 
     private final SongService songService;
     private final SyncSongResourceAssembler resourceAssembler;
-    private final SyncSongsResourceAssembler resourcesAssembler;
 
     @Autowired
-    public SongsAsyncController(SongService songService, SyncSongResourceAssembler resourceAssembler,
-                                SyncSongsResourceAssembler resourcesAssembler) {
+    public SongsAsyncController(SongService songService, SyncSongResourceAssembler resourceAssembler) {
         this.songService = songService;
         this.resourceAssembler = resourceAssembler;
-        this.resourcesAssembler = resourcesAssembler;
     }
 
     @GetMapping("/songs/{id}")

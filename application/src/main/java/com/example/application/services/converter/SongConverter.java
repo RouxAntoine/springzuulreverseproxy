@@ -9,14 +9,16 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class SongConverter implements Converter<Song, SongEntity> {
 
-    private final ConversionService converter;
+    private final Converter<String, MusicStyle> converter;
 
     @Autowired
-    public SongConverter(ConversionService converter) {
-        this.converter = converter;
+    public SongConverter(StringToEnumConverterFactory factory) {
+        this.converter = factory.getConverter(MusicStyle.class);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class SongConverter implements Converter<Song, SongEntity> {
 
         return SongEntity.builder()
                 .id(song.getId())
-                .style(this.converter.convert(song.getMusicType(), MusicStyle.class))
+                .style(this.converter.convert(song.getMusicType()))
                 .title(song.getTitle())
                 .year(song.getYear())
                 .build();

@@ -36,13 +36,12 @@ public class SongsSyncController {
         this.resourcesAssembler = resourcesAssembler;
     }
 
-    @ResponseBody
-    @PostMapping("/songs")
+    @PostMapping(value = "/songs")
     public Resource<Song> addSong(@RequestBody Song song) {
         Mono<Song> savedSongWait = this.songRepository.create(song);
 
         Song saved = savedSongWait.block();
-        log.info("Song " + saved.getId() + "create with success");
+        log.info("Song " + saved.getId() + " create with success");
 
         return this.resourceAssembler.toResource(song);
     }
