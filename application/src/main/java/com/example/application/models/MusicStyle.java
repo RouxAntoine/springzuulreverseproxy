@@ -7,5 +7,6 @@ public enum MusicStyle {
     RAP,
     HIP_HOP,
     CLASSIQUE,
-    FRENCH_VARIETY
+    FRENCH_VARIETY,
+    REGGAE
 }

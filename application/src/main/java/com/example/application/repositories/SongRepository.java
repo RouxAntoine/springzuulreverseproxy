@@ -78,6 +78,7 @@ public class SongRepository implements ReactiveCrudRepository<SongEntity, String
     @Override
     public Flux<SongEntity> findAll() {
 //        this.songOps.opsForValue();
+        this.songOps.opsForHash().get("id", "Song");
         return null;
     }
 
