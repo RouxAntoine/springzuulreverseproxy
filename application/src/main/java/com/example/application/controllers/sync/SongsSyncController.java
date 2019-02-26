@@ -51,6 +51,9 @@ public class SongsSyncController {
         final Mono<Song> songWait = this.songRepository.getOne(id);
         Song song = songWait.block();
 
+        if(song == null) {
+            throw new RuntimeException("songNotFound");
+        }
         return resourceAssembler.toResource(song);
     }
 

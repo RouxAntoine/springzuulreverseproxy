@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class SyncSongsResourceAssembler implements ResourceAssembler<List<Song>, Resources<Resource<Song>>> {

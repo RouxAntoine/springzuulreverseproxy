@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Operators;
 
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -28,7 +29,7 @@ public class SongRepository implements ReactiveCrudRepository<SongEntity, String
 
     @Override
     public <S extends SongEntity> Mono<S> save(@NotNull S entity) {
-        Mono<Boolean> success = this.songOps.opsForValue().set(entity.getId(), entity);
+        Mono<Boolean> success = this.songOps.opsForHash().put("Song", entity.getId(), entity);
         return success
                 .map(aBoolean -> aBoolean? entity : null);
     }
@@ -52,7 +53,7 @@ public class SongRepository implements ReactiveCrudRepository<SongEntity, String
 
     @Override
     public Mono<SongEntity> findById(String s) {
-        return this.songOps.opsForValue().get(s);
+        return this.songOps.<String, SongEntity>opsForHash().get("Song", s);
     }
 
     @Override
@@ -71,15 +72,15 @@ public class SongRepository implements ReactiveCrudRepository<SongEntity, String
     @Override
     public Mono<Boolean> existsById(Publisher<String> id) {
         return Mono.from(id)
-                .map(this.songOps::hasKey)
+                .map(s ->  this.songOps.opsForHash().hasKey("Song", s))
                 .flatMap(booleanMono -> booleanMono);
     }
 
     @Override
     public Flux<SongEntity> findAll() {
-//        this.songOps.opsForValue();
-        this.songOps.opsForHash().get("id", "Song");
-        return null;
+        return this.songOps.<String, SongEntity>opsForHash()
+                .entries("Song")
+                .map(Map.Entry::getValue);
     }
 
     @Override

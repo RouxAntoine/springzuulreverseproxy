@@ -25,6 +25,7 @@ public class RedisConnectorConfig {
                 .value(serializer)
                 .key(stringSerializer)
                 .hashKey(stringSerializer)
+                .hashValue(serializer)
                 .build();
 
         return new ReactiveRedisTemplate<>(factory, context);

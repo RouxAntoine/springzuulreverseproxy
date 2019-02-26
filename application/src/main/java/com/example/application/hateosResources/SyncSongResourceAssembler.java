@@ -1,12 +1,13 @@
 package com.example.application.hateosResources;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
-
 import com.example.application.controllers.sync.SongsSyncController;
 import com.example.application.models.Song;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
+
+import static org.springframework.hateoas.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class SyncSongResourceAssembler implements ResourceAssembler<Song, Resource<Song>> {
