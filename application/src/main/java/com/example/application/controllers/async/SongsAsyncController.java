@@ -4,11 +4,13 @@ import com.example.application.hateosResources.AsyncSongResourceAssembler;
 import com.example.application.models.Song;
 import com.example.application.services.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo;
 
 /**
  * asynchronous controller
@@ -27,9 +29,9 @@ public class SongsAsyncController {
     }
 
     @GetMapping("/songs/{id}")
-    public Mono<Resource<Song>> getSong(@PathVariable String id, ServerWebExchange exchange) {
+    public Mono<EntityModel<Song>> getSong(@PathVariable String id, ServerWebExchange exchange) {
         return this.songService.getOne(id)
-                .flatMap(songMono -> resourceAssembler.toResource(songMono, exchange));
+                .flatMap(songMono -> resourceAssembler.toModel(songMono, exchange));
     }
 
     @GetMapping("/songs")
@@ -37,16 +39,15 @@ public class SongsAsyncController {
         return this.songService.getAll();
     }
 
-    @GetMapping("/songs/hateos")
-    public Flux<Resource<Song>> listSongs(ServerWebExchange exchange) {
-        return this.songService.getAll()
-                .flatMap(song -> resourceAssembler.toResource(song, exchange));
+    @GetMapping("/songs/hateoas")
+    public Flux<EntityModel<Song>> listSongs(ServerWebExchange exchange) {
+        return resourceAssembler.toCollectionModel(this.songService.getAll(), exchange);
     }
 
     @ResponseBody
     @PostMapping("/songs")
-    public Mono<Resource<Song>> addSong(@RequestBody Song song, ServerWebExchange exchange) {
+    public Mono<EntityModel<Song>> addSong(@RequestBody Song song, ServerWebExchange exchange) {
         return this.songService.create(song)
-                .flatMap(savedSong -> resourceAssembler.toResource(savedSong, exchange));
+                .flatMap(savedSong -> resourceAssembler.toModel(savedSong, exchange));
     }
 }

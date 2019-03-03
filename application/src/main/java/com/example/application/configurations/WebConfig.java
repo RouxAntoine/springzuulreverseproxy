@@ -25,9 +25,6 @@ public class WebConfig implements WebFluxConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-//        StringToEnumConverterFactory stringToEnumConverterFactory = new StringToEnumConverterFactory();
-//        SongConverter songConverter = new SongConverter(stringToEnumConverterFactory.getConverter(MusicStyle.class));
-
         registry.addConverter(songEntityConverter);
         registry.addConverter(songConverter);
         registry.addConverterFactory(stringToEnumConverterFactory);

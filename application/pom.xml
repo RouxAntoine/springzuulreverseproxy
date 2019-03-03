@@ -36,17 +36,31 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-hateoas</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-webmvc</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-hateoas</artifactId>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>spring-webmvc</artifactId>-->
+                    <!--<groupId>org.springframework</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.hateoas</groupId>-->
+            <!--<artifactId>spring-hateoas</artifactId>-->
+            <!--<version>1.0.0.BUILD-SNAPSHOT</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!-- fix jar dependency for avoid change on master release -->
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+            <version>1.0.0.BUILD-SNAPSHOT</version>
+            <systemPath>${project.basedir}/spring-hateoas-1.0.0.BUILD-20190302.012957-100.jar</systemPath>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- for custom @ConfigurationProperties -->
         <dependency>
@@ -55,13 +69,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- test dependency -->
         <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
-            <version>1.0.0.BUILD-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
         </dependency>
+
     </dependencies>
-
-
 </project>
