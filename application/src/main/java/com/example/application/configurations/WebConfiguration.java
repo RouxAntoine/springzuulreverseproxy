@@ -10,14 +10,14 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @Configuration
-public class WebConfig implements WebFluxConfigurer {
+public class WebConfiguration implements WebFluxConfigurer {
 
     private final StringToEnumConverterFactory stringToEnumConverterFactory;
     private final SongConverter songConverter;
     private final SongEntityConverter songEntityConverter;
 
     @Autowired
-    public WebConfig(StringToEnumConverterFactory stringToEnumConverterFactory, SongConverter songConverter, SongEntityConverter songEntityConverter) {
+    public WebConfiguration(StringToEnumConverterFactory stringToEnumConverterFactory, SongConverter songConverter, SongEntityConverter songEntityConverter) {
         this.stringToEnumConverterFactory = stringToEnumConverterFactory;
         this.songConverter = songConverter;
         this.songEntityConverter = songEntityConverter;
