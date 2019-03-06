@@ -3,6 +3,9 @@ package com.example.application.controllers.async;
 import com.example.application.models.MusicStyle;
 import com.example.application.models.Song;
 import com.example.application.services.SongService;
+import com.example.application.services.utils.StreamUtils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +24,14 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 
+/**
+ * test async {@link org.springframework.web.bind.annotation.RestController}
+ * with {@link Flux} and {@link Mono} return
+ */
 @Log4j2
 @AutoConfigureWebTestClient
 @SpringBootTest
@@ -33,16 +41,21 @@ class SongsAsyncControllerTest {
 
     private List<Song> songs = new ArrayList<>();
 
+    private ObjectMapper mapper;
+
     @MockBean
     private SongService songService;
 
     @Autowired
-    public SongsAsyncControllerTest(WebTestClient client) {
+    SongsAsyncControllerTest(WebTestClient client) {
         this.client = client;
     }
 
     @BeforeEach
     void init() {
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         songs.add(
                 Song.builder()
                         .id("14")
@@ -87,12 +100,30 @@ class SongsAsyncControllerTest {
     @Test
     @DisplayName("test get all song without hateoas")
     void listSongsBasic() {
+        log.info("get all song");
+
+        Mockito
+                .when(this.songService.getAll())
+                .thenReturn(Flux.fromIterable(songs));
+
+        this.client
+                .get()
+                .uri("/async/songs")
+                .accept(MediaTypes.HAL_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaTypes.HAL_JSON_UTF8)
+                .expectBodyList(Song.class)
+                .hasSize(2)
+                .value(this::compareListEntityModelSong)
+                .contains(songs.get(0), songs.get(1));
+
     }
 
     @Test
     @DisplayName("test get all song with hateoas")
     void listSongs() {
-        log.info("get all song");
+        log.info("get all song hateoas");
 
         Mockito
                 .when(this.songService.getAll())
@@ -105,22 +136,63 @@ class SongsAsyncControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaTypes.HAL_JSON_UTF8)
-                .expectBodyList(Song.class)
+                .expectBodyList(Object.class)
                 .hasSize(2)
-                .consumeWith(listEntityExchangeResult -> {
-                    List<Song> s = listEntityExchangeResult.getResponseBody();
-
-                    Assertions.assertNotNull(s);
-                    Assertions.assertNotNull(s.get(0));
-                    AssertionErrors.assertEquals("compare id", s.get(0).getId(), songs.get(0).getId());
-//                    AssertionErrors.assertEquals("contain _links", ((Object)s.get(0))["_links"], songs.get(0).getId());
-
-                })
-                .contains(songs.get(0), songs.get(1));
+                .value(this::compareListEntityModelObject);
     }
 
-    @Test
-    @DisplayName("test post new song object")
-    void addSong() {
+    /**
+     * compare {@link List<Object>} to expected {@value songs}
+     * @param listToCompare
+     */
+    private void compareListEntityModelObject(List<Object> listToCompare) {
+        Assertions.assertNotNull(listToCompare);
+
+        StreamUtils
+                .zip(listToCompare.stream(), songs.stream())
+                .peek(o -> {
+                    Song tested = mapper.convertValue(o.getFirst(), Song.class);
+                    compareSong(o.getSecond(), tested);
+                })
+                .forEach(o -> compareEntityModelSong(o.getFirst()));
+    }
+
+    /**
+     * compare {@link List<Song>} to expected {@value songs}
+     * @param listToCompare
+     */
+    private void compareListEntityModelSong(List<Song> listToCompare) {
+        Assertions.assertNotNull(listToCompare);
+
+        StreamUtils
+                .zip(listToCompare.stream(), songs.stream())
+                .forEach(o -> {
+                    Song tested = mapper.convertValue(o.getFirst(), Song.class);
+                    compareSong(o.getSecond(), tested);
+                });
+    }
+
+    /**
+     * compare Object (json) to Song POJO
+     * @param toCompare
+     */
+    private void compareEntityModelSong(Object toCompare) {
+        AssertionErrors.assertTrue("object instance of Map", toCompare instanceof Map);
+        Map m = (Map) toCompare;
+
+        AssertionErrors.assertTrue("_links instance of Map", m.get("_links") instanceof Map);
+        Map links = (Map)m.get("_links");
+        AssertionErrors.assertEquals("contain _links size 2", links.size(), 2);
+    }
+
+    /**
+     * compare two Song
+     * @param expected
+     * @param m
+     */
+    private void compareSong(Song expected, Song m) {
+        AssertionErrors.assertEquals("compare id", m.getId(), expected.getId());
+        AssertionErrors.assertEquals("compare year", m.getYear(), expected.getYear());
+        AssertionErrors.assertEquals("compare title", m.getTitle(), expected.getTitle());
     }
 }
