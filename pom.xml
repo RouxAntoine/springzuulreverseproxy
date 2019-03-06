@@ -32,6 +32,7 @@
 		<junit-platform.version>1.4.0</junit-platform.version>
 		<mockito.version>2.24.0</mockito.version>
 		<reactor.version>3.2.6.RELEASE</reactor.version>
+		<guava.version>27.0.1-jre</guava.version>
 	</properties>
 
 	<dependencyManagement>
@@ -57,7 +58,12 @@
 				<version>${spring-2.1.2-version}</version>
 			</dependency>
 
-			<!-- test dependency -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+
 			<!-- test dependency -->
 			<dependency>
 				<groupId>io.projectreactor</groupId>
@@ -98,7 +104,6 @@
 				<artifactId>mockito-junit-jupiter</artifactId>
 				<version>${mockito.version}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -113,6 +118,11 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 		</dependency>
 
 		<!-- test dependency -->

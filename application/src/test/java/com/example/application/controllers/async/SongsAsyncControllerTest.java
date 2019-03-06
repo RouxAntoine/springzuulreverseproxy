@@ -3,9 +3,9 @@ package com.example.application.controllers.async;
 import com.example.application.models.MusicStyle;
 import com.example.application.models.Song;
 import com.example.application.services.SongService;
-import com.example.application.services.utils.StreamUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Streams;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.util.Pair;
+import org.springframework.data.util.StreamUtils;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -148,8 +150,7 @@ class SongsAsyncControllerTest {
     private void compareListEntityModelObject(List<Object> listToCompare) {
         Assertions.assertNotNull(listToCompare);
 
-        StreamUtils
-                .zip(listToCompare.stream(), songs.stream())
+        Streams.zip(listToCompare.stream(), songs.stream(), Pair::of)
                 .peek(o -> {
                     Song tested = mapper.convertValue(o.getFirst(), Song.class);
                     compareSong(o.getSecond(), tested);
@@ -164,8 +165,7 @@ class SongsAsyncControllerTest {
     private void compareListEntityModelSong(List<Song> listToCompare) {
         Assertions.assertNotNull(listToCompare);
 
-        StreamUtils
-                .zip(listToCompare.stream(), songs.stream())
+        Streams.zip(listToCompare.stream(), songs.stream(), Pair::of)
                 .forEach(o -> {
                     Song tested = mapper.convertValue(o.getFirst(), Song.class);
                     compareSong(o.getSecond(), tested);
