@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.CompositeFilter;
 
@@ -40,13 +41,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-            .antMatcher("/**")
+        http.antMatcher("/**")
             .authorizeRequests()
-                .antMatchers("/", "/login**", "/webjars/**", "/error**")
-                .permitAll()
-            .anyRequest()
-                .authenticated()
+                .antMatchers("/", "/login**", "/webjars/**", "/error**").permitAll()
+                .anyRequest().authenticated()
+            .and().exceptionHandling()
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
             .and()
                 .logout().logoutSuccessUrl("/").permitAll()
             .and().addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
@@ -114,13 +114,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @param filter
      * @return
      */
-    @Bean
-    public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
-        FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(filter);
-        registration.setOrder(-100);
-        return registration;
-    }
+//    @Bean
+//    public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
+//        FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<>();
+//        registration.setFilter(filter);
+//        registration.setOrder(-100);
+//        return registration;
+//    }
 
 //    @Override
 //    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
