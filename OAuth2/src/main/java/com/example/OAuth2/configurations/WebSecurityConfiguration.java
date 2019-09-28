@@ -3,7 +3,6 @@ package com.example.OAuth2.configurations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
-import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -66,6 +64,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         OAuth2ClientAuthenticationProcessingFilter githubFilter = createFilter(github(), "/login/github");
         filters.add(githubFilter);
 
+//        // local filter
+//        OAuth2ClientAuthenticationProcessingFilter local = createFilter(local(), "/login/local");
+//        filters.add(local);
+
         filter.setFilters(filters);
         return filter;
     }
@@ -79,11 +81,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private OAuth2ClientAuthenticationProcessingFilter createFilter(AggregatedClientResources resources, String path) {
         OAuth2ClientAuthenticationProcessingFilter filter = new OAuth2ClientAuthenticationProcessingFilter(path);
 
-        OAuth2RestTemplate facebookTemplate = new OAuth2RestTemplate(resources.getClient(), oauth2ClientContext);
-        filter.setRestTemplate(facebookTemplate);
+        OAuth2RestTemplate template = new OAuth2RestTemplate(resources.getClient(), oauth2ClientContext);
+        filter.setRestTemplate(template);
 
         UserInfoTokenServices tokenServices = new UserInfoTokenServices(resources.getResource().getUserInfoUri(), resources.getClient().getClientId());
-        tokenServices.setRestTemplate(facebookTemplate);
+        tokenServices.setRestTemplate(template);
 
         filter.setTokenServices(tokenServices);
         return filter;
@@ -109,11 +111,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new AggregatedClientResources();
     }
 
-    /**
-     * redirect filter to oauth facebook login page
-     * @param filter
-     * @return
-     */
+//    /**
+//     * redirect filter to oauth facebook login page
+//     * @param filter
+//     * @return
+//     */
 //    @Bean
 //    public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
 //        FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<>();

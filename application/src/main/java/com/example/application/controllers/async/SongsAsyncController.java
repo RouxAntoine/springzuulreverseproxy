@@ -3,12 +3,18 @@ package com.example.application.controllers.async;
 import com.example.application.hateosResources.AsyncSongResourceAssembler;
 import com.example.application.models.Song;
 import com.example.application.services.SongService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.security.Principal;
+import java.util.logging.Level;
 
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo;
 
@@ -18,6 +24,8 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.lin
 @RestController
 @RequestMapping("/async")
 public class SongsAsyncController {
+
+    private static final Logger log = LoggerFactory.getLogger(SongsAsyncController.class);
 
     private final SongService songService;
     private final AsyncSongResourceAssembler resourceAssembler;
@@ -35,7 +43,8 @@ public class SongsAsyncController {
     }
 
     @GetMapping("/songs")
-    public Flux<Song> listSongsBasic() {
+    public Flux<Song> listSongsBasic(Mono<Principal> principal) {
+        principal.log(log.getName(), Level.FINEST);
         return this.songService.getAll();
     }
 
